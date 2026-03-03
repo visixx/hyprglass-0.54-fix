@@ -72,13 +72,14 @@ SDecorationPositioningInfo CGlassDecoration::getPositioningInfo() {
 void CGlassDecoration::onPositioningReply(const SDecorationPositioningReply& reply) {}
 
 void CGlassDecoration::draw(PHLMONITOR monitor, float const& alpha) {
-    if (!**g_pGlobalState->config.enabled)
+    const auto window = m_window.lock();
+
+    if (!**g_pGlobalState->config.enabled || window->m_ruleApplicator->m_tagKeeper.isTagged("hyprglass_disabled"))
         return;
 
     CGlassPassElement::SGlassPassData data{this, alpha};
     g_pHyprRenderer->m_renderPass.add(makeUnique<CGlassPassElement>(data));
 
-    const auto window = m_window.lock();
     if (window) {
         const auto workspace = window->m_workspace;
 
